@@ -44,7 +44,7 @@
 <text x="555" y="286" text-anchor="middle" class="date">7/21</text>
 <rect x="637" y="157" width="28" height="3" rx="4" fill="#3fb950"/>
 <rect x="637" y="160" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="651" y="150" text-anchor="middle" class="value add">+276</text>
-<text x="651" y="176" text-anchor="middle" class="value del">-10</text>
+<text x="651" y="150" text-anchor="middle" class="value add">+305</text>
+<text x="651" y="176" text-anchor="middle" class="value del">-24</text>
 <text x="651" y="286" text-anchor="middle" class="date">7/22</text>
 </svg>
