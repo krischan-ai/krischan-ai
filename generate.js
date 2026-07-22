@@ -3,16 +3,21 @@
 const fs = require("node:fs");
 
 const USERNAME = process.env.GITHUB_USERNAME || "krischan-ai";
-const AUTHOR_EMAILS = new Set(
-  (process.env.METRICS_AUTHOR_EMAILS || "")
-    .split(",")
-    .map((email) => email.trim().toLowerCase())
-    .filter(Boolean),
-);
+const AUTHOR_EMAILS = csvSet(process.env.METRICS_AUTHOR_EMAILS);
+const EXCLUDED_REPOSITORIES = csvSet(process.env.METRICS_EXCLUDED_REPOSITORIES);
 const TOKEN = process.env.METRICS_TOKEN;
 const DAYS = 7;
 const TZ_OFFSET_HOURS = 8;
 const API_URL = process.env.GITHUB_API_URL || "https://api.github.com";
+
+function csvSet(value = "") {
+  return new Set(
+    value
+      .split(",")
+      .map((item) => item.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
 
 if (!TOKEN) {
   console.error("METRICS_TOKEN is required.");
@@ -99,7 +104,7 @@ async function collect() {
       sort: "updated",
     });
   }
-  const active = repositories.filter((repo) => !repo.archived && !repo.disabled);
+  const active = repositories.filter((repo) => !repo.archived && !repo.disabled && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase()));
 
   const commitGroups = await mapLimit(active, 5, async (repo) => {
     try {

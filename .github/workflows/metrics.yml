@@ -30,6 +30,7 @@ jobs:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN || github.token }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           METRICS_AUTHOR_EMAILS: root@dingzhen,root@ps.ps
+          METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
         run: node generate.js
 
       - name: Commit chart
