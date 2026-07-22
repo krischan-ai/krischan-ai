@@ -78,11 +78,21 @@ async function collect() {
   const days = recentDays();
   const byDate = new Map(days.map((day) => [day.key, day]));
   const since = new Date(`${days[0].key}T00:00:00+08:00`).toISOString();
-  const repositories = await allPages("/user/repos", {
-    visibility: "all",
-    affiliation: "owner,collaborator,organization_member",
-    sort: "updated",
-  });
+  let repositories;
+  try {
+    repositories = await allPages("/user/repos", {
+      visibility: "all",
+      affiliation: "owner,collaborator,organization_member",
+      sort: "updated",
+    });
+  } catch (error) {
+    if (!error.message.includes("GitHub API 403")) throw error;
+    console.warn("Token cannot list authenticated repositories; using public repositories instead.");
+    repositories = await allPages(`/users/${USERNAME}/repos`, {
+      type: "owner",
+      sort: "updated",
+    });
+  }
   const active = repositories.filter((repo) => !repo.archived && !repo.disabled);
 
   const commitGroups = await mapLimit(active, 5, async (repo) => {
