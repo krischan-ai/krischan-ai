@@ -27,7 +27,7 @@ jobs:
 
       - name: Generate 7-day activity chart
         env:
-          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN || github.token }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
         run: node generate.js
 
