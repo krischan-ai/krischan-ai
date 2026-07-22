@@ -3,6 +3,12 @@
 const fs = require("node:fs");
 
 const USERNAME = process.env.GITHUB_USERNAME || "krischan-ai";
+const AUTHOR_EMAILS = new Set(
+  (process.env.METRICS_AUTHOR_EMAILS || "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean),
+);
 const TOKEN = process.env.METRICS_TOKEN;
 const DAYS = 7;
 const TZ_OFFSET_HOURS = 8;
@@ -98,10 +104,15 @@ async function collect() {
   const commitGroups = await mapLimit(active, 5, async (repo) => {
     try {
       const commits = await allPages(`/repos/${repo.full_name}/commits`, {
-        author: USERNAME,
         since,
       });
-      return commits.map((commit) => ({ repo: repo.full_name, sha: commit.sha }));
+      return commits
+        .filter((commit) => {
+          const login = commit.author?.login?.toLowerCase();
+          const email = commit.commit?.author?.email?.toLowerCase();
+          return login === USERNAME.toLowerCase() || AUTHOR_EMAILS.has(email);
+        })
+        .map((commit) => ({ repo: repo.full_name, sha: commit.sha }));
     } catch (error) {
       // Empty repositories return 409; inaccessible histories should not abort every metric.
       console.warn(`Skipping ${repo.full_name}: ${error.message}`);
@@ -110,6 +121,9 @@ async function collect() {
   });
 
   const unique = [...new Map(commitGroups.flat().map((item) => [item.sha, item])).values()];
+  console.log(
+    `Matched ${unique.length} commits across ${active.length} repositories for ${USERNAME}.`,
+  );
   const details = await mapLimit(unique, 5, ({ repo, sha }) =>
     github(`/repos/${repo}/commits/${sha}`),
   );
