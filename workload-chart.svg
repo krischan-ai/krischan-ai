@@ -43,8 +43,8 @@
 <text x="555" y="176" text-anchor="middle" class="value del">-0</text>
 <text x="555" y="286" text-anchor="middle" class="date">7/21</text>
 <rect x="637" y="74" width="28" height="86" rx="4" fill="#3fb950"/>
-<rect x="637" y="160" width="28" height="2" rx="4" fill="#f85149"/>
-<text x="651" y="67" text-anchor="middle" class="value add">+273</text>
-<text x="651" y="178" text-anchor="middle" class="value del">-7</text>
+<rect x="637" y="160" width="28" height="3" rx="4" fill="#f85149"/>
+<text x="651" y="67" text-anchor="middle" class="value add">+275</text>
+<text x="651" y="179" text-anchor="middle" class="value del">-9</text>
 <text x="651" y="286" text-anchor="middle" class="date">7/22</text>
 </svg>
