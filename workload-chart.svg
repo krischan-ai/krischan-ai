@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="120" viewBox="0 0 740 120" role="img" aria-label="7-Day Code Activity pending first workflow run">
+  <rect x="0.5" y="0.5" width="739" height="119" rx="10" fill="#0d1117" stroke="#30363d"/>
+  <text x="370" y="56" text-anchor="middle" fill="#e6edf3" font-family="Segoe UI, sans-serif" font-size="17" font-weight="600">7-Day Code Activity</text>
+  <text x="370" y="82" text-anchor="middle" fill="#8b949e" font-family="Segoe UI, sans-serif" font-size="13">Waiting for the first GitHub Actions run</text>
+</svg>
