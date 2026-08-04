@@ -27,10 +27,9 @@ jobs:
 
       - name: Generate 7-day activity chart
         env:
-          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN || github.token }}
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
-          METRICS_AUTHOR_EMAILS: root@dingzhen,root@ps.ps
-          METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
+          METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
         run: node generate.js
 
       - name: Commit chart
