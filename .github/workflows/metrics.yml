@@ -2,8 +2,8 @@ name: Daily Workload Tracker
 
 on:
   schedule:
-    # GitHub cron uses UTC. 21:30 UTC is 05:30 in Asia/Taipei (UTC+8).
-    - cron: "30 21 * * *"
+    # GitHub cron uses UTC. Run every 4 hours so same-day work appears sooner.
+    - cron: "30 */4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -30,6 +30,7 @@ jobs:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
+          METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
         run: node generate.js
 
       - name: Commit chart

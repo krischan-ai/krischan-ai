@@ -56,6 +56,12 @@ function localDate(date) {
   return shifted.toISOString().slice(0, 10);
 }
 
+function authorMatches(commit) {
+  const login = commit.author?.login?.toLowerCase();
+  const email = commit.commit?.author?.email?.toLowerCase();
+  return login === USERNAME.toLowerCase() || AUTHOR_EMAILS.has(email);
+}
+
 function recentDays(now = new Date()) {
   const today = new Date(now.getTime() + TZ_OFFSET_HOURS * 3_600_000);
   const result = [];
@@ -105,18 +111,17 @@ async function collect() {
     });
   }
   const active = repositories.filter((repo) => !repo.archived && !repo.disabled && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase()));
+  console.log(`Scanning ${active.length} repositories (${active.filter((repo) => repo.private).length} private) for ${USERNAME}.`);
 
   const commitGroups = await mapLimit(active, 5, async (repo) => {
     try {
-      const commits = await allPages(`/repos/${repo.full_name}/commits`, {
-        since,
-      });
-      return commits
-        .filter((commit) => {
-          const login = commit.author?.login?.toLowerCase();
-          const email = commit.commit?.author?.email?.toLowerCase();
-          return login === USERNAME.toLowerCase() || AUTHOR_EMAILS.has(email);
-        })
+      const branches = await collectBranches(repo);
+      const commitsByBranch = await mapLimit([...branches], 3, (branch) =>
+        collectBranchCommits(repo, branch, since),
+      );
+      return commitsByBranch
+        .flat()
+        .filter(authorMatches)
         .map((commit) => ({ repo: repo.full_name, sha: commit.sha }));
     } catch (error) {
       // Empty repositories return 409; inaccessible histories should not abort every metric.
@@ -133,6 +138,7 @@ async function collect() {
     github(`/repos/${repo}/commits/${sha}`),
   );
   for (const detail of details) {
+    if (!authorMatches(detail)) continue;
     const timestamp = detail.commit?.author?.date || detail.commit?.committer?.date;
     const day = timestamp && byDate.get(localDate(new Date(timestamp)));
     if (day) {
@@ -141,6 +147,28 @@ async function collect() {
     }
   }
   return days;
+}
+
+async function collectBranches(repo) {
+  try {
+    const branches = await allPages(`/repos/${repo.full_name}/branches`, {});
+    return [...new Set([repo.default_branch, ...branches.map((branch) => branch.name)].filter(Boolean))];
+  } catch (error) {
+    console.warn(`Could not load branches for ${repo.full_name}: ${error.message}`);
+    return [repo.default_branch].filter(Boolean);
+  }
+}
+
+async function collectBranchCommits(repo, branch, since) {
+  try {
+    return await allPages(`/repos/${repo.full_name}/commits`, {
+      sha: branch,
+      since,
+    });
+  } catch (error) {
+    console.warn(`Skipping ${repo.full_name}@${branch}: ${error.message}`);
+    return [];
+  }
 }
 
 function render(days) {
