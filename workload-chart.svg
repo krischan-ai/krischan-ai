@@ -12,39 +12,39 @@
 <circle cx="526" cy="29" r="5" fill="#3fb950"/><text x="538" y="33" class="legend">Additions</text>
 <circle cx="624" cy="29" r="5" fill="#f85149"/><text x="636" y="33" class="legend">Deletions</text>
 <line x1="36" y1="160" x2="704" y2="160" stroke="#30363d"/>
-<rect x="61" y="115" width="28" height="45" rx="4" fill="#3fb950"/>
-<rect x="61" y="160" width="28" height="6" rx="4" fill="#f85149"/>
-<text x="75" y="108" text-anchor="middle" class="value add">+1150</text>
-<text x="75" y="182" text-anchor="middle" class="value del">-152</text>
-<text x="75" y="286" text-anchor="middle" class="date">8/12</text>
-<rect x="157" y="74" width="28" height="86" rx="4" fill="#3fb950"/>
-<rect x="157" y="160" width="28" height="9" rx="4" fill="#f85149"/>
-<text x="171" y="67" text-anchor="middle" class="value add">+2199</text>
-<text x="171" y="185" text-anchor="middle" class="value del">-223</text>
-<text x="171" y="286" text-anchor="middle" class="date">8/13</text>
+<rect x="61" y="74" width="28" height="86" rx="4" fill="#3fb950"/>
+<rect x="61" y="160" width="28" height="9" rx="4" fill="#f85149"/>
+<text x="75" y="67" text-anchor="middle" class="value add">+2199</text>
+<text x="75" y="185" text-anchor="middle" class="value del">-223</text>
+<text x="75" y="286" text-anchor="middle" class="date">8/13</text>
+<rect x="157" y="160" width="28" height="0" rx="4" fill="#3fb950"/>
+<rect x="157" y="160" width="28" height="0" rx="4" fill="#f85149"/>
+<text x="171" y="153" text-anchor="middle" class="value add">+0</text>
+<text x="171" y="176" text-anchor="middle" class="value del">-0</text>
+<text x="171" y="286" text-anchor="middle" class="date">8/14</text>
 <rect x="253" y="160" width="28" height="0" rx="4" fill="#3fb950"/>
 <rect x="253" y="160" width="28" height="0" rx="4" fill="#f85149"/>
 <text x="267" y="153" text-anchor="middle" class="value add">+0</text>
 <text x="267" y="176" text-anchor="middle" class="value del">-0</text>
-<text x="267" y="286" text-anchor="middle" class="date">8/14</text>
+<text x="267" y="286" text-anchor="middle" class="date">8/15</text>
 <rect x="349" y="160" width="28" height="0" rx="4" fill="#3fb950"/>
 <rect x="349" y="160" width="28" height="0" rx="4" fill="#f85149"/>
 <text x="363" y="153" text-anchor="middle" class="value add">+0</text>
 <text x="363" y="176" text-anchor="middle" class="value del">-0</text>
-<text x="363" y="286" text-anchor="middle" class="date">8/15</text>
+<text x="363" y="286" text-anchor="middle" class="date">8/16</text>
 <rect x="445" y="160" width="28" height="0" rx="4" fill="#3fb950"/>
 <rect x="445" y="160" width="28" height="0" rx="4" fill="#f85149"/>
 <text x="459" y="153" text-anchor="middle" class="value add">+0</text>
 <text x="459" y="176" text-anchor="middle" class="value del">-0</text>
-<text x="459" y="286" text-anchor="middle" class="date">8/16</text>
+<text x="459" y="286" text-anchor="middle" class="date">8/17</text>
 <rect x="541" y="160" width="28" height="0" rx="4" fill="#3fb950"/>
 <rect x="541" y="160" width="28" height="0" rx="4" fill="#f85149"/>
 <text x="555" y="153" text-anchor="middle" class="value add">+0</text>
 <text x="555" y="176" text-anchor="middle" class="value del">-0</text>
-<text x="555" y="286" text-anchor="middle" class="date">8/17</text>
+<text x="555" y="286" text-anchor="middle" class="date">8/18</text>
 <rect x="637" y="160" width="28" height="0" rx="4" fill="#3fb950"/>
 <rect x="637" y="160" width="28" height="0" rx="4" fill="#f85149"/>
 <text x="651" y="153" text-anchor="middle" class="value add">+0</text>
 <text x="651" y="176" text-anchor="middle" class="value del">-0</text>
-<text x="651" y="286" text-anchor="middle" class="date">8/18</text>
+<text x="651" y="286" text-anchor="middle" class="date">8/19</text>
 </svg>
