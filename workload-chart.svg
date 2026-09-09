@@ -32,19 +32,19 @@
 <text x="363" y="153" text-anchor="middle" class="value add">+0</text>
 <text x="363" y="176" text-anchor="middle" class="value del">-0</text>
 <text x="363" y="286" text-anchor="middle" class="date">9/6</text>
-<rect x="445" y="154" width="28" height="6" rx="4" fill="#3fb950"/>
+<rect x="445" y="157" width="28" height="3" rx="4" fill="#3fb950"/>
 <rect x="445" y="160" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="459" y="147" text-anchor="middle" class="value add">+2767</text>
+<text x="459" y="150" text-anchor="middle" class="value add">+2767</text>
 <text x="459" y="176" text-anchor="middle" class="value del">-0</text>
 <text x="459" y="286" text-anchor="middle" class="date">9/7</text>
 <rect x="541" y="74" width="28" height="86" rx="4" fill="#3fb950"/>
 <rect x="541" y="160" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="555" y="67" text-anchor="middle" class="value add">+38422</text>
+<text x="555" y="67" text-anchor="middle" class="value add">+73738</text>
 <text x="555" y="176" text-anchor="middle" class="value del">-0</text>
 <text x="555" y="286" text-anchor="middle" class="date">9/8</text>
-<rect x="637" y="156" width="28" height="4" rx="4" fill="#3fb950"/>
+<rect x="637" y="143" width="28" height="17" rx="4" fill="#3fb950"/>
 <rect x="637" y="160" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="651" y="149" text-anchor="middle" class="value add">+1782</text>
-<text x="651" y="176" text-anchor="middle" class="value del">-2</text>
+<text x="651" y="136" text-anchor="middle" class="value add">+14341</text>
+<text x="651" y="176" text-anchor="middle" class="value del">-183</text>
 <text x="651" y="286" text-anchor="middle" class="date">9/9</text>
 </svg>
