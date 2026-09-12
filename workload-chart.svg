@@ -42,9 +42,9 @@
 <text x="555" y="146" text-anchor="middle" class="value add">+5635</text>
 <text x="555" y="176" text-anchor="middle" class="value del">-0</text>
 <text x="555" y="286" text-anchor="middle" class="date">9/11</text>
-<rect x="637" y="112" width="28" height="48" rx="4" fill="#3fb950"/>
+<rect x="637" y="111" width="28" height="49" rx="4" fill="#3fb950"/>
 <rect x="637" y="160" width="28" height="3" rx="4" fill="#f85149"/>
-<text x="651" y="105" text-anchor="middle" class="value add">+41519</text>
-<text x="651" y="179" text-anchor="middle" class="value del">-2784</text>
+<text x="651" y="104" text-anchor="middle" class="value add">+41895</text>
+<text x="651" y="179" text-anchor="middle" class="value del">-2788</text>
 <text x="651" y="286" text-anchor="middle" class="date">9/12</text>
 </svg>
