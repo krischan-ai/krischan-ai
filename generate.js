@@ -10,14 +10,28 @@ const DAYS = 7;
 const TZ_OFFSET_HOURS = 8;
 const FILE_CHANGE_CAP = Number(process.env.WORKLOAD_FILE_CHANGE_CAP || 1000);
 const API_URL = process.env.GITHUB_API_URL || "https://api.github.com";
+const RULES = loadRules();
 
 function csvSet(value = "") {
-  return new Set(
-    value
-      .split(",")
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean),
-  );
+  return new Set(value.split(",").map((item) => item.trim().toLowerCase()).filter(Boolean));
+}
+
+function loadRules() {
+  try {
+    return JSON.parse(fs.readFileSync("repository-rules.json", "utf8"));
+  } catch (error) {
+    console.warn(`Could not load repository-rules.json: ${error.message}`);
+    return { defaults: { weight: 1, exclude: false }, repositories: {} };
+  }
+}
+
+function repoRule(fullName) {
+  const defaults = RULES.defaults || {};
+  const exact = RULES.repositories?.[fullName] || {};
+  return {
+    weight: Number.isFinite(Number(exact.weight)) ? Number(exact.weight) : Number(defaults.weight || 1),
+    exclude: Boolean(exact.exclude ?? defaults.exclude ?? false),
+  };
 }
 
 if (!TOKEN) {
@@ -128,15 +142,13 @@ async function collect() {
   } catch (error) {
     if (!error.message.includes("GitHub API 403")) throw error;
     console.warn("Token cannot list authenticated repositories; using public repositories instead.");
-    repositories = await allPages(`/users/${USERNAME}/repos`, {
-      type: "owner",
-      sort: "updated",
-    });
+    repositories = await allPages(`/users/${USERNAME}/repos`, { type: "owner", sort: "updated" });
   }
 
-  const active = repositories.filter(
-    (repo) => !repo.archived && !repo.disabled && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase()),
-  );
+  const active = repositories.filter((repo) => {
+    const rule = repoRule(repo.full_name);
+    return !repo.archived && !repo.disabled && !rule.exclude && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase());
+  });
 
   const commitGroups = await mapLimit(active, 5, async (repo) => {
     try {
@@ -157,8 +169,10 @@ async function collect() {
 
   const details = await mapLimit(unique, 5, ({ repo, sha }) => github(`/repos/${repo}/commits/${sha}`));
 
-  for (const detail of details) {
+  for (let i = 0; i < details.length; i += 1) {
+    const detail = details[i];
     if (!authorMatches(detail)) continue;
+    const repoWeight = repoRule(unique[i].repo).weight;
     const timestamp = detail.commit?.author?.date || detail.commit?.committer?.date;
     const day = timestamp && byDate.get(localDate(new Date(timestamp)));
     if (!day) continue;
@@ -166,8 +180,8 @@ async function collect() {
     let hasSourceChange = false;
     for (const file of detail.files || []) {
       if (!isSourceFile(file.filename || "")) continue;
-      const additions = Math.min(file.additions || 0, FILE_CHANGE_CAP);
-      const deletions = Math.min(file.deletions || 0, FILE_CHANGE_CAP);
+      const additions = Math.round(Math.min(file.additions || 0, FILE_CHANGE_CAP) * repoWeight);
+      const deletions = Math.round(Math.min(file.deletions || 0, FILE_CHANGE_CAP) * repoWeight);
       if (additions + deletions <= 0) continue;
       day.additions += additions;
       day.deletions += deletions;
@@ -223,7 +237,7 @@ function render(days) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
 <title id="title">7-Day Engineering Activity</title>
-<desc id="desc">Effective authored source-code additions and deletions by day for ${USERNAME}</desc>
+<desc id="desc">Weighted effective authored source-code additions and deletions by day for ${USERNAME}</desc>
 <style>
   .title { fill:#e6edf3; font:600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .legend,.date,.subtitle { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
@@ -232,7 +246,7 @@ function render(days) {
 </style>
 <rect x="0.5" y="0.5" width="739" height="337" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">7-Day Engineering Activity</text>
-<text x="24" y="56" class="subtitle">${totalCommits} source commits · ${totalChanges.toLocaleString("en-US")} effective changed lines</text>
+<text x="24" y="56" class="subtitle">${totalCommits} source commits · ${totalChanges.toLocaleString("en-US")} weighted effective lines · reference repos down-weighted</text>
 <circle cx="526" cy="29" r="5" fill="#3fb950"/><text x="538" y="33" class="legend">Additions</text>
 <circle cx="624" cy="29" r="5" fill="#f85149"/><text x="636" y="33" class="legend">Deletions</text>
 <line x1="36" y1="${baseline}" x2="704" y2="${baseline}" stroke="#30363d"/>
