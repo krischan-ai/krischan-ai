@@ -1,0 +1,23 @@
+[
+  {
+    "name": "financial-compliance-ai-copilot",
+    "label": "AI / FinTech",
+    "description": "Auditable AML/KYC case-review copilot with deterministic workflow orchestration, policy RAG, guarded agent assistance and human review.",
+    "stack": "Python · FastAPI · RAG · PostgreSQL/pgvector · Agents",
+    "url": "https://github.com/krischan-ai/financial-compliance-ai-copilot"
+  },
+  {
+    "name": "Vascular-Interventional-Navigation-System",
+    "label": "Medical Simulation",
+    "description": "Digital-twin platform for vascular intervention research with path planning, Newton/MuJoCo physics, Godot HCI/XR and RL training interfaces.",
+    "stack": "Python · Newton · MuJoCo · Godot · FastAPI · Gymnasium",
+    "url": "https://github.com/krischan-ai/Vascular-Interventional-Navigation-System"
+  },
+  {
+    "name": "HK-JobMarket-Analyzer",
+    "label": "Data / NLP",
+    "description": "Hong Kong job-market intelligence system for automated collection, cleaning, NLP/LLM extraction, knowledge-base search and visualization.",
+    "stack": "Python · Playwright · FastAPI · Vue 3 · TypeScript · NLP",
+    "url": "https://github.com/krischan-ai/HK-JobMarket-Analyzer"
+  }
+]
