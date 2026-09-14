@@ -20,15 +20,21 @@ function escapeXml(value) {
   })[char]);
 }
 
+function primaryProgrammingLanguage(svg) {
+  const languages = [...svg.matchAll(/class="lang">([^<]+)<\/text>/g)].map((match) => match[1].trim());
+  const presentationLanguages = new Set(["HTML", "CSS", "SCSS", "Jupyter Notebook"]);
+  return languages.find((language) => !presentationLanguages.has(language)) || languages[0] || "—";
+}
+
 const workload = read("workload-chart.svg");
 const languages = read("languages.svg");
 const repositories = read("repositories.svg");
 
 const sourceCommits7d = match(workload, />(\d+) source commits ·/);
-const changedLines7d = match(workload, /source commits · ([0-9,.]+) effective changed lines/);
+const changedLines7d = match(workload, /source commits · ([0-9,.]+) (?:weighted )?effective (?:changed )?lines/);
 const commits30d = match(languages, /metaStrong[^>]*>(\d+)<\/tspan> commits/);
 const repos30d = match(languages, /commits · <tspan class="metaStrong">(\d+)<\/tspan> active repos/);
-const mainLanguage = match(languages, /class="lang">([^<]+)<\/text>/);
+const mainLanguage = primaryProgrammingLanguage(languages);
 const topRepository = match(repositories, /class="repo">([^<]+)<\/text>/).replace(/ · private$/, "");
 
 const width = 740;
@@ -36,7 +42,7 @@ const height = 278;
 
 const stats = [
   ["7D COMMITS", sourceCommits7d, "source commits"],
-  ["7D CODE CHURN", changedLines7d, "effective lines"],
+  ["7D CODE CHURN", changedLines7d, "weighted effective lines"],
   ["30D ACTIVE REPOS", repos30d, "repositories"],
   ["30D COMMITS", commits30d, "authored commits"],
 ];
@@ -75,10 +81,10 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${
 <rect x="0" y="0" width="740" height="4" rx="2" fill="url(#accent)"/>
 <text x="24" y="42" class="brand">krischan-ai · Engineering Dashboard</text>
 <text x="24" y="65" class="tagline">AI Systems · RAG &amp; Agents · Simulation · Applied Data Engineering</text>
-<text x="24" y="89" class="focus">Primary language: <tspan class="focusStrong">${escapeXml(mainLanguage)}</tspan>   ·   Most active repo: <tspan class="focusStrong">${escapeXml(topRepository)}</tspan></text>
+<text x="24" y="89" class="focus">Primary programming language: <tspan class="focusStrong">${escapeXml(mainLanguage)}</tspan>   ·   Most active engineering repo: <tspan class="focusStrong">${escapeXml(topRepository)}</tspan></text>
 <text x="24" y="112" class="chip">FOCUS AREAS   Reliable AI workflows   ·   Auditable systems   ·   Digital-twin simulation   ·   Developer tooling</text>
 ${cards}
-<text x="24" y="249" class="note">Metrics use authored source-code changes, excluding generated/vendor/data artifacts and capping bulk single-file changes.</text>
+<text x="24" y="249" class="note">Metrics use authored source-code changes, excluding generated/vendor/data artifacts and down-weighting coursework/reference repositories.</text>
 </svg>\n`;
 
 fs.writeFileSync("overview.svg", svg);
