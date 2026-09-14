@@ -1,6 +1,18 @@
 name: Daily Workload Tracker
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "generate.js"
+      - "generate-languages.js"
+      - "generate-repositories.js"
+      - "generate-overview.js"
+      - "generate-featured-projects.js"
+      - "repository-rules.json"
+      - "featured-projects.json"
+      - ".github/workflows/metrics.yml"
   schedule:
     # GitHub cron uses UTC. Run every 4 hours so same-day work appears sooner.
     - cron: "30 */4 * * *"
