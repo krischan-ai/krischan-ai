@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="740" height="278" viewBox="0 0 740 278" role="img" aria-labelledby="title desc">
 <title id="title">krischan-ai Engineering Overview</title>
-<desc id="desc">A compact overview of recent authored software development activity</desc>
+<desc id="desc">A compact overview of authored software development activity</desc>
 <defs>
   <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0%" stop-color="#58a6ff"/>
@@ -38,15 +38,15 @@
   </g>
 <g>
     <rect x="372" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
-    <text x="386" y="155" class="eyebrow">30D ACTIVE REPOS</text>
-    <text x="386" y="184" class="value">3</text>
-    <text x="386" y="202" class="note">repositories</text>
+    <text x="386" y="155" class="eyebrow">ACTIVE REPOS</text>
+    <text x="386" y="184" class="value">13</text>
+    <text x="386" y="202" class="note">six-month window</text>
   </g>
 <g>
     <rect x="546" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
-    <text x="560" y="155" class="eyebrow">30D COMMITS</text>
-    <text x="560" y="184" class="value">60</text>
-    <text x="560" y="202" class="note">authored commits</text>
+    <text x="560" y="155" class="eyebrow">AUTHORED COMMITS</text>
+    <text x="560" y="184" class="value">596</text>
+    <text x="560" y="202" class="note">six-month window</text>
   </g>
 <text x="24" y="249" class="note">Metrics use authored source-code changes, excluding generated/vendor/data artifacts and down-weighting coursework/reference repositories.</text>
 </svg>
