@@ -27,25 +27,28 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Generate 7-day activity chart
+      - name: Generate activity metrics
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
           METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
+          LANGUAGE_METRICS_DAYS: "30"
+          LANGUAGE_FILE_CHANGE_CAP: "1000"
         run: |
           git pull --ff-only origin "${GITHUB_REF_NAME}"
           node generate.js
+          node generate-languages.js
 
-      - name: Commit chart
+      - name: Commit charts
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add workload-chart.svg
+          git add workload-chart.svg languages.svg
           if git diff --cached --quiet; then
             echo "No chart changes to commit."
             exit 0
           fi
-          git commit -m "chore: update code activity"
+          git commit -m "chore: update development metrics"
           git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
