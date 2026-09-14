@@ -9,6 +9,7 @@ const TOKEN = process.env.METRICS_TOKEN;
 const DAYS = Number(process.env.LANGUAGE_METRICS_DAYS || 30);
 const FILE_CHANGE_CAP = Number(process.env.LANGUAGE_FILE_CHANGE_CAP || 1000);
 const API_URL = process.env.GITHUB_API_URL || "https://api.github.com";
+const RULES = loadRules();
 
 if (!TOKEN) {
   console.error("METRICS_TOKEN is required.");
@@ -16,12 +17,25 @@ if (!TOKEN) {
 }
 
 function csvSet(value = "") {
-  return new Set(
-    value
-      .split(",")
-      .map((item) => item.trim().toLowerCase())
-      .filter(Boolean),
-  );
+  return new Set(value.split(",").map((item) => item.trim().toLowerCase()).filter(Boolean));
+}
+
+function loadRules() {
+  try {
+    return JSON.parse(fs.readFileSync("repository-rules.json", "utf8"));
+  } catch (error) {
+    console.warn(`Could not load repository-rules.json: ${error.message}`);
+    return { defaults: { weight: 1, exclude: false }, repositories: {} };
+  }
+}
+
+function repoRule(fullName) {
+  const defaults = RULES.defaults || {};
+  const exact = RULES.repositories?.[fullName] || {};
+  return {
+    weight: Number.isFinite(Number(exact.weight)) ? Number(exact.weight) : Number(defaults.weight || 1),
+    exclude: Boolean(exact.exclude ?? defaults.exclude ?? false),
+  };
 }
 
 const headers = {
@@ -155,9 +169,10 @@ async function collect() {
     repositories = await allPages(`/users/${USERNAME}/repos`, { type: "owner", sort: "updated" });
   }
 
-  const active = repositories.filter(
-    (repo) => !repo.archived && !repo.disabled && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase()),
-  );
+  const active = repositories.filter((repo) => {
+    const rule = repoRule(repo.full_name);
+    return !repo.archived && !repo.disabled && !rule.exclude && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase());
+  });
 
   const commitGroups = await mapLimit(active, 5, async (repo) => {
     const branches = await collectBranches(repo);
@@ -181,14 +196,15 @@ async function collect() {
     const detail = details[i];
     if (!authorMatches(detail)) continue;
     const repo = unique[i].repo;
+    const repoWeight = repoRule(repo).weight;
     let touchedSource = false;
 
     for (const file of detail.files || []) {
       const language = languageFor(file.filename || "");
       if (!language) continue;
-      const [name, color, weight] = language;
+      const [name, color, languageWeight] = language;
       const raw = (file.additions || 0) + (file.deletions || 0);
-      const score = Math.round(Math.min(raw, FILE_CHANGE_CAP) * weight);
+      const score = Math.round(Math.min(raw, FILE_CHANGE_CAP) * languageWeight * repoWeight);
       if (score <= 0) continue;
 
       const current = totals.get(name) || { name, color, score: 0, files: 0 };
@@ -238,7 +254,7 @@ function render(data) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
 <title id="title">Active Development Languages</title>
-<desc id="desc">Authored source-code activity by language over the last ${DAYS} days</desc>
+<desc id="desc">Weighted authored source-code activity by language over the last ${DAYS} days</desc>
 <style>
   .title { fill:#e6edf3; font:600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .subtitle,.muted,.meta,.pct { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
@@ -247,8 +263,8 @@ function render(data) {
 </style>
 <rect x="0.5" y="0.5" width="739" height="329" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">Active Development · Last ${DAYS} Days</text>
-<text x="24" y="56" class="subtitle">Authored code changes · generated/vendor/data files excluded · per-file changes capped at ${FILE_CHANGE_CAP}</text>
-<text x="24" y="78" class="meta"><tspan class="metaStrong">${data.commits}</tspan> commits · <tspan class="metaStrong">${data.repos}</tspan> active repos · <tspan class="metaStrong">${data.effectiveChanges.toLocaleString("en-US")}</tspan> effective changed lines</text>
+<text x="24" y="56" class="subtitle">Authored source changes · generated/vendor/data excluded · reference repositories down-weighted</text>
+<text x="24" y="78" class="meta"><tspan class="metaStrong">${data.commits}</tspan> commits · <tspan class="metaStrong">${data.repos}</tspan> active repos · <tspan class="metaStrong">${data.effectiveChanges.toLocaleString("en-US")}</tspan> weighted effective lines</text>
 ${rows}
 </svg>\n`;
 }
