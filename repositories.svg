@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="326" viewBox="0 0 740 326" role="img" aria-labelledby="title desc">
+<title id="title">Active Repositories</title>
+<desc id="desc">Initial placeholder for repository activity metrics</desc>
+<style>
+  .title { fill:#e6edf3; font:600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+  .subtitle,.muted { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+</style>
+<rect x="0.5" y="0.5" width="739" height="325" rx="10" fill="#0d1117" stroke="#30363d"/>
+<text x="24" y="34" class="title">Active Repositories · Last 30 Days</text>
+<text x="24" y="56" class="subtitle">Ranked by effective authored source-code changes · generated/vendor/data files excluded</text>
+<text x="24" y="118" class="muted">Repository activity will populate when the metrics workflow refreshes.</text>
+</svg>
