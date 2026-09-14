@@ -39,6 +39,32 @@ function repoRule(fullName) {
   };
 }
 
+function preferCanonicalRepository(repositories) {
+  const byName = new Map();
+  const username = USERNAME.toLowerCase();
+
+  for (const repo of repositories) {
+    const key = String(repo.name || "").toLowerCase();
+    if (!key) continue;
+
+    const existing = byName.get(key);
+    if (!existing) {
+      byName.set(key, repo);
+      continue;
+    }
+
+    const repoOwned = repo.owner?.login?.toLowerCase() === username;
+    const existingOwned = existing.owner?.login?.toLowerCase() === username;
+
+    // When the same project name is visible through several owners or mirrors,
+    // keep the repository owned by the profile user. This prevents duplicate
+    // rows such as several cathsim-centerline copies from entering the card.
+    if (repoOwned && !existingOwned) byName.set(key, repo);
+  }
+
+  return [...byName.values()];
+}
+
 const headers = {
   Accept: "application/vnd.github+json",
   Authorization: `Bearer ${TOKEN}`,
@@ -139,7 +165,8 @@ async function collect() {
     repositories = await allPages(`/users/${USERNAME}/repos`, { type: "owner", sort: "updated" });
   }
 
-  const active = repositories.filter((repo) => {
+  const canonicalRepositories = preferCanonicalRepository(repositories);
+  const active = canonicalRepositories.filter((repo) => {
     const rule = repoRule(repo.full_name);
     return !repo.archived && !repo.disabled && !rule.exclude && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase());
   });
