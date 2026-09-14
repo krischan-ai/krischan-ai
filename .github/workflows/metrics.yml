@@ -45,9 +45,9 @@ jobs:
           GITHUB_USERNAME: ${{ github.repository_owner }}
           METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
           METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
-          LANGUAGE_METRICS_DAYS: "30"
+          LANGUAGE_METRICS_DAYS: "180"
           LANGUAGE_FILE_CHANGE_CAP: "1000"
-          REPOSITORY_METRICS_DAYS: "30"
+          REPOSITORY_METRICS_DAYS: "180"
           REPOSITORY_FILE_CHANGE_CAP: "1000"
         run: |
           git pull --ff-only origin "${GITHUB_REF_NAME}"
