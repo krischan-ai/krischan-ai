@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="740" height="258" viewBox="0 0 740 258" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="740" height="278" viewBox="0 0 740 278" role="img" aria-labelledby="title desc">
 <title id="title">krischan-ai Engineering Overview</title>
-<desc id="desc">Initial placeholder for engineering dashboard overview</desc>
+<desc id="desc">A compact overview of recent authored software development activity</desc>
 <defs>
   <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0%" stop-color="#58a6ff"/>
@@ -11,11 +11,42 @@
 <style>
   .brand { fill:#f0f6fc; font:700 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .tagline { fill:#8b949e; font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
-  .muted { fill:#6e7681; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+  .eyebrow { fill:#8b949e; font:600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:.8px }
+  .value { fill:#f0f6fc; font:700 21px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+  .note { fill:#6e7681; font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+  .focus { fill:#c9d1d9; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+  .focusStrong { fill:#58a6ff; font-weight:600 }
+  .chip { fill:#8b949e; font:600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
 </style>
-<rect x="0.5" y="0.5" width="739" height="257" rx="12" fill="#0d1117" stroke="#30363d"/>
+<rect x="0.5" y="0.5" width="739" height="277" rx="12" fill="#0d1117" stroke="#30363d"/>
 <rect x="0" y="0" width="740" height="4" rx="2" fill="url(#accent)"/>
 <text x="24" y="42" class="brand">krischan-ai · Engineering Dashboard</text>
-<text x="24" y="65" class="tagline">AI · Applied Engineering · Simulation · Developer Tooling</text>
-<text x="24" y="112" class="muted">Metrics will populate from the existing activity cards when the workflow refreshes.</text>
+<text x="24" y="65" class="tagline">AI Systems · RAG &amp; Agents · Simulation · Applied Data Engineering</text>
+<text x="24" y="89" class="focus">Primary language: <tspan class="focusStrong">HTML</tspan>   ·   Most active repo: <tspan class="focusStrong">cityu-courses</tspan></text>
+<text x="24" y="112" class="chip">FOCUS AREAS   Reliable AI workflows   ·   Auditable systems   ·   Digital-twin simulation   ·   Developer tooling</text>
+<g>
+    <rect x="24" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="38" y="155" class="eyebrow">7D COMMITS</text>
+    <text x="38" y="184" class="value">6</text>
+    <text x="38" y="202" class="note">source commits</text>
+  </g>
+<g>
+    <rect x="198" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="212" y="155" class="eyebrow">7D CODE CHURN</text>
+    <text x="212" y="184" class="value">—</text>
+    <text x="212" y="202" class="note">effective lines</text>
+  </g>
+<g>
+    <rect x="372" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="386" y="155" class="eyebrow">30D ACTIVE REPOS</text>
+    <text x="386" y="184" class="value">3</text>
+    <text x="386" y="202" class="note">repositories</text>
+  </g>
+<g>
+    <rect x="546" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
+    <text x="560" y="155" class="eyebrow">30D COMMITS</text>
+    <text x="560" y="184" class="value">60</text>
+    <text x="560" y="202" class="note">authored commits</text>
+  </g>
+<text x="24" y="249" class="note">Metrics use authored source-code changes, excluding generated/vendor/data artifacts and capping bulk single-file changes.</text>
 </svg>
