@@ -6,7 +6,7 @@ const USERNAME = process.env.GITHUB_USERNAME || "krischan-ai";
 const AUTHOR_EMAILS = csvSet(process.env.METRICS_AUTHOR_EMAILS);
 const EXCLUDED_REPOSITORIES = csvSet(process.env.METRICS_EXCLUDED_REPOSITORIES);
 const TOKEN = process.env.METRICS_TOKEN;
-const DAYS = Number(process.env.LANGUAGE_METRICS_DAYS || 30);
+const DAYS = Number(process.env.LANGUAGE_METRICS_DAYS || 180);
 const FILE_CHANGE_CAP = Number(process.env.LANGUAGE_FILE_CHANGE_CAP || 1000);
 const API_URL = process.env.GITHUB_API_URL || "https://api.github.com";
 const RULES = loadRules();
@@ -250,11 +250,11 @@ function render(data) {
           `<text x="704" y="${y + 11}" text-anchor="end" class="pct">${pct.toFixed(1)}%</text>`,
         ].join("\n");
       }).join("\n")
-    : `<text x="24" y="120" class="muted">No authored source-code changes found in the last ${DAYS} days.</text>`;
+    : `<text x="24" y="120" class="muted">No authored source-code changes found in the selected window.</text>`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
 <title id="title">Active Development Languages</title>
-<desc id="desc">Weighted authored source-code activity by language over the last ${DAYS} days</desc>
+<desc id="desc">Weighted authored source-code activity by language</desc>
 <style>
   .title { fill:#e6edf3; font:600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .subtitle,.muted,.meta,.pct { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
@@ -262,7 +262,7 @@ function render(data) {
   .metaStrong { fill:#e6edf3; font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
 </style>
 <rect x="0.5" y="0.5" width="739" height="329" rx="10" fill="#0d1117" stroke="#30363d"/>
-<text x="24" y="34" class="title">Active Development · Last ${DAYS} Days</text>
+<text x="24" y="34" class="title">Active Development Stack</text>
 <text x="24" y="56" class="subtitle">Authored source changes · generated/vendor/data excluded · reference repositories down-weighted</text>
 <text x="24" y="78" class="meta"><tspan class="metaStrong">${data.commits}</tspan> commits · <tspan class="metaStrong">${data.repos}</tspan> active repos · <tspan class="metaStrong">${data.effectiveChanges.toLocaleString("en-US")}</tspan> weighted effective lines</text>
 ${rows}
