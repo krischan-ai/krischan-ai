@@ -22,4 +22,4 @@ AI Systems · RAG & Agents · Simulation · Applied Data Engineering
 
 ## Active Projects
 
-![Active Repositories](./repositories.svg)
+![Active Repositories](./repositories.svg?v=20260914-1)
