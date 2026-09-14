@@ -8,6 +8,7 @@ const EXCLUDED_REPOSITORIES = csvSet(process.env.METRICS_EXCLUDED_REPOSITORIES);
 const TOKEN = process.env.METRICS_TOKEN;
 const DAYS = 7;
 const TZ_OFFSET_HOURS = 8;
+const FILE_CHANGE_CAP = Number(process.env.WORKLOAD_FILE_CHANGE_CAP || 1000);
 const API_URL = process.env.GITHUB_API_URL || "https://api.github.com";
 
 function csvSet(value = "") {
@@ -30,6 +31,27 @@ const headers = {
   "User-Agent": `${USERNAME}-profile-metrics`,
   "X-GitHub-Api-Version": "2022-11-28",
 };
+
+const excludedPathPatterns = [
+  /(^|\/)(node_modules|vendor|vendors|dist|build|coverage|generated|outputs?|reports?|artifacts?|\.next|\.nuxt|\.cache|site|docs\/_build)(\/|$)/i,
+  /(^|\/)(static\/vendor|public\/vendor)(\/|$)/i,
+  /(^|\/)(data|datasets?|assets?)(\/|$)/i,
+  /\.min\.(js|css)$/i,
+  /\.(map|lock|svg|csv|tsv|parquet|feather|pickle|pkl|npy|npz|vtk|obj|stl|nii|nii\.gz)$/i,
+];
+
+const sourceExtensions = new Set([
+  ".py", ".ipynb", ".ts", ".tsx", ".js", ".jsx", ".vue", ".gd", ".sh", ".bash", ".zsh",
+  ".html", ".htm", ".css", ".scss", ".java", ".kt", ".kts", ".go", ".rs", ".c", ".h", ".cc",
+  ".cpp", ".hpp", ".cs", ".rb", ".php", ".swift", ".dart", ".lua", ".r", ".sql",
+]);
+
+function isSourceFile(filename = "") {
+  const lower = filename.toLowerCase();
+  if (excludedPathPatterns.some((pattern) => pattern.test(lower))) return false;
+  const dot = lower.lastIndexOf(".");
+  return dot >= 0 && sourceExtensions.has(lower.slice(dot));
+}
 
 async function github(path, params = {}) {
   const url = new URL(path, API_URL);
@@ -73,6 +95,7 @@ function recentDays(now = new Date()) {
       label: `${day.getUTCMonth() + 1}/${day.getUTCDate()}`,
       additions: 0,
       deletions: 0,
+      commits: 0,
     });
   }
   return result;
@@ -110,42 +133,49 @@ async function collect() {
       sort: "updated",
     });
   }
-  const active = repositories.filter((repo) => !repo.archived && !repo.disabled && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase()));
-  console.log(`Scanning ${active.length} repositories (${active.filter((repo) => repo.private).length} private) for ${USERNAME}.`);
+
+  const active = repositories.filter(
+    (repo) => !repo.archived && !repo.disabled && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase()),
+  );
 
   const commitGroups = await mapLimit(active, 5, async (repo) => {
     try {
       const branches = await collectBranches(repo);
-      const commitsByBranch = await mapLimit([...branches], 3, (branch) =>
-        collectBranchCommits(repo, branch, since),
-      );
+      const commitsByBranch = await mapLimit(branches, 3, (branch) => collectBranchCommits(repo, branch, since));
       return commitsByBranch
         .flat()
         .filter(authorMatches)
         .map((commit) => ({ repo: repo.full_name, sha: commit.sha }));
     } catch (error) {
-      // Empty repositories return 409; inaccessible histories should not abort every metric.
       console.warn(`Skipping ${repo.full_name}: ${error.message}`);
       return [];
     }
   });
 
-  const unique = [...new Map(commitGroups.flat().map((item) => [item.sha, item])).values()];
-  console.log(
-    `Matched ${unique.length} commits across ${active.length} repositories for ${USERNAME}.`,
-  );
-  const details = await mapLimit(unique, 5, ({ repo, sha }) =>
-    github(`/repos/${repo}/commits/${sha}`),
-  );
+  const unique = [...new Map(commitGroups.flat().map((item) => [`${item.repo}:${item.sha}`, item])).values()];
+  console.log(`Matched ${unique.length} commits across ${active.length} repositories for ${USERNAME}.`);
+
+  const details = await mapLimit(unique, 5, ({ repo, sha }) => github(`/repos/${repo}/commits/${sha}`));
+
   for (const detail of details) {
     if (!authorMatches(detail)) continue;
     const timestamp = detail.commit?.author?.date || detail.commit?.committer?.date;
     const day = timestamp && byDate.get(localDate(new Date(timestamp)));
-    if (day) {
-      day.additions += detail.stats?.additions || 0;
-      day.deletions += detail.stats?.deletions || 0;
+    if (!day) continue;
+
+    let hasSourceChange = false;
+    for (const file of detail.files || []) {
+      if (!isSourceFile(file.filename || "")) continue;
+      const additions = Math.min(file.additions || 0, FILE_CHANGE_CAP);
+      const deletions = Math.min(file.deletions || 0, FILE_CHANGE_CAP);
+      if (additions + deletions <= 0) continue;
+      day.additions += additions;
+      day.deletions += deletions;
+      hasSourceChange = true;
     }
+    if (hasSourceChange) day.commits += 1;
   }
+
   return days;
 }
 
@@ -161,10 +191,7 @@ async function collectBranches(repo) {
 
 async function collectBranchCommits(repo, branch, since) {
   try {
-    return await allPages(`/repos/${repo.full_name}/commits`, {
-      sha: branch,
-      since,
-    });
+    return await allPages(`/repos/${repo.full_name}/commits`, { sha: branch, since });
   } catch (error) {
     console.warn(`Skipping ${repo.full_name}@${branch}: ${error.message}`);
     return [];
@@ -173,10 +200,13 @@ async function collectBranchCommits(repo, branch, since) {
 
 function render(days) {
   const width = 740;
-  const height = 320;
-  const baseline = 160;
+  const height = 338;
+  const baseline = 170;
   const chartHeight = 86;
   const max = Math.max(1, ...days.flatMap((day) => [day.additions, day.deletions]));
+  const totalCommits = days.reduce((sum, day) => sum + day.commits, 0);
+  const totalChanges = days.reduce((sum, day) => sum + day.additions + day.deletions, 0);
+
   const bars = days.map((day, index) => {
     const x = 61 + index * 96;
     const addHeight = Math.round((day.additions / max) * chartHeight);
@@ -186,21 +216,23 @@ function render(days) {
       `<rect x="${x}" y="${baseline}" width="28" height="${delHeight}" rx="4" fill="#f85149"/>`,
       `<text x="${x + 14}" y="${baseline - addHeight - 7}" text-anchor="middle" class="value add">+${day.additions}</text>`,
       `<text x="${x + 14}" y="${baseline + delHeight + 16}" text-anchor="middle" class="value del">-${day.deletions}</text>`,
-      `<text x="${x + 14}" y="286" text-anchor="middle" class="date">${day.label}</text>`,
+      `<text x="${x + 14}" y="298" text-anchor="middle" class="date">${day.label}</text>`,
+      `<text x="${x + 14}" y="316" text-anchor="middle" class="date">${day.commits}c</text>`,
     ].join("\n");
   }).join("\n");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
-<title id="title">7-Day Code Activity</title>
-<desc id="desc">Additions and deletions by day for ${USERNAME}</desc>
+<title id="title">7-Day Engineering Activity</title>
+<desc id="desc">Effective authored source-code additions and deletions by day for ${USERNAME}</desc>
 <style>
   .title { fill:#e6edf3; font:600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
-  .legend,.date { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
+  .legend,.date,.subtitle { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .value { font:600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .add { fill:#3fb950 } .del { fill:#f85149 }
 </style>
-<rect x="0.5" y="0.5" width="739" height="319" rx="10" fill="#0d1117" stroke="#30363d"/>
-<text x="24" y="34" class="title">7-Day Code Activity</text>
+<rect x="0.5" y="0.5" width="739" height="337" rx="10" fill="#0d1117" stroke="#30363d"/>
+<text x="24" y="34" class="title">7-Day Engineering Activity</text>
+<text x="24" y="56" class="subtitle">${totalCommits} source commits · ${totalChanges.toLocaleString("en-US")} effective changed lines</text>
 <circle cx="526" cy="29" r="5" fill="#3fb950"/><text x="538" y="33" class="legend">Additions</text>
 <circle cx="624" cy="29" r="5" fill="#f85149"/><text x="636" y="33" class="legend">Deletions</text>
 <line x1="36" y1="${baseline}" x2="704" y2="${baseline}" stroke="#30363d"/>
