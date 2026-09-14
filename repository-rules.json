@@ -1,0 +1,69 @@
+{
+  "defaults": {
+    "category": "Engineering",
+    "weight": 1.0,
+    "exclude": false
+  },
+  "repositories": {
+    "krischan-ai/financial-compliance-ai-copilot": {
+      "category": "AI / FinTech",
+      "weight": 1.0
+    },
+    "krischan-ai/hong-kong-ai-resume-harness": {
+      "category": "AI Tooling",
+      "weight": 1.0
+    },
+    "krischan-ai/novel-narrative-os": {
+      "category": "AI Agents",
+      "weight": 1.0
+    },
+    "krischan-ai/glm-coding-helper": {
+      "category": "Developer Tooling",
+      "weight": 1.0
+    },
+    "krischan-ai/HK-JobMarket-Analyzer": {
+      "category": "Data / Analytics",
+      "weight": 1.0
+    },
+    "krischan-ai/Vascular-Interventional-Navigation-System": {
+      "category": "Medical Simulation",
+      "weight": 1.0
+    },
+    "krischan-ai/Vascular-Path-Planning": {
+      "category": "Medical Simulation",
+      "weight": 1.0
+    },
+    "krischan-ai/cathsim-centerline": {
+      "category": "Medical Simulation",
+      "weight": 1.0
+    },
+    "krischan-ai/ai-training-tutor": {
+      "category": "AI / Education",
+      "weight": 1.0
+    },
+    "krischan-ai/Universal_AI_Course_Tutor_Starter_Pack": {
+      "category": "AI / Education",
+      "weight": 1.0
+    },
+    "krischan-ai/cityu-courses": {
+      "category": "Education",
+      "weight": 0.6
+    },
+    "krischan-ai/hello-agents": {
+      "category": "Learning / Reference",
+      "weight": 0.25
+    },
+    "krischan-ai/vnpy": {
+      "category": "Upstream / Reference",
+      "weight": 0.1
+    },
+    "krischan-ai/comfyui": {
+      "category": "Upstream / Reference",
+      "weight": 0.1
+    },
+    "krischan-ai/Roboflow-Colony-Counting-Dataset": {
+      "category": "Dataset",
+      "weight": 0.15
+    }
+  }
+}
