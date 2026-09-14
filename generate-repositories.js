@@ -6,7 +6,7 @@ const USERNAME = process.env.GITHUB_USERNAME || "krischan-ai";
 const AUTHOR_EMAILS = csvSet(process.env.METRICS_AUTHOR_EMAILS);
 const EXCLUDED_REPOSITORIES = csvSet(process.env.METRICS_EXCLUDED_REPOSITORIES);
 const TOKEN = process.env.METRICS_TOKEN;
-const DAYS = Number(process.env.REPOSITORY_METRICS_DAYS || 30);
+const DAYS = Number(process.env.REPOSITORY_METRICS_DAYS || 180);
 const FILE_CHANGE_CAP = Number(process.env.REPOSITORY_FILE_CHANGE_CAP || 1000);
 const API_URL = process.env.GITHUB_API_URL || "https://api.github.com";
 const RULES = loadRules();
@@ -240,11 +240,11 @@ function render(repositories) {
           `<text x="700" y="${y + 11}" text-anchor="end" class="value">${compact(repo.score)} · ${repo.commits}c${weightNote}</text>`,
         ].join("\n");
       }).join("\n")
-    : `<text x="24" y="110" class="muted">No authored source-code activity found in the last ${DAYS} days.</text>`;
+    : `<text x="24" y="110" class="muted">No authored source-code activity found in the selected window.</text>`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
 <title id="title">Active Repositories</title>
-<desc id="desc">Repositories ranked by weighted effective authored source-code changes over the last ${DAYS} days</desc>
+<desc id="desc">Repositories ranked by weighted effective authored source-code changes</desc>
 <style>
   .title { fill:#e6edf3; font:600 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
   .subtitle,.muted,.value { fill:#8b949e; font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
@@ -252,7 +252,7 @@ function render(repositories) {
   .tag { fill:#8b949e; font:600 10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif }
 </style>
 <rect x="0.5" y="0.5" width="739" height="353" rx="10" fill="#0d1117" stroke="#30363d"/>
-<text x="24" y="34" class="title">Active Projects · Last ${DAYS} Days</text>
+<text x="24" y="34" class="title">Active Projects</text>
 <text x="24" y="56" class="subtitle">Authored source-code activity · project-type labels · reference/upstream repositories down-weighted</text>
 ${rows}
 </svg>\n`;
