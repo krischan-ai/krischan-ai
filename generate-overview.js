@@ -32,8 +32,8 @@ const repositories = read("repositories.svg");
 
 const sourceCommits7d = match(workload, />(\d+) source commits ·/);
 const changedLines7d = match(workload, /source commits · ([0-9,.]+) (?:weighted )?effective (?:changed )?lines/);
-const commits30d = match(languages, /metaStrong[^>]*>(\d+)<\/tspan> commits/);
-const repos30d = match(languages, /commits · <tspan class="metaStrong">(\d+)<\/tspan> active repos/);
+const commitsWindow = match(languages, /metaStrong[^>]*>(\d+)<\/tspan> commits/);
+const reposWindow = match(languages, /commits · <tspan class="metaStrong">(\d+)<\/tspan> active repos/);
 const mainLanguage = primaryProgrammingLanguage(languages);
 const topRepository = match(repositories, /class="repo">([^<]+)<\/text>/).replace(/ · private$/, "");
 
@@ -43,8 +43,8 @@ const height = 278;
 const stats = [
   ["7D COMMITS", sourceCommits7d, "source commits"],
   ["7D CODE CHURN", changedLines7d, "weighted effective lines"],
-  ["30D ACTIVE REPOS", repos30d, "repositories"],
-  ["30D COMMITS", commits30d, "authored commits"],
+  ["ACTIVE REPOS", reposWindow, "six-month window"],
+  ["AUTHORED COMMITS", commitsWindow, "six-month window"],
 ];
 
 const cards = stats.map(([label, value, note], index) => {
@@ -59,7 +59,7 @@ const cards = stats.map(([label, value, note], index) => {
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
 <title id="title">krischan-ai Engineering Overview</title>
-<desc id="desc">A compact overview of recent authored software development activity</desc>
+<desc id="desc">A compact overview of authored software development activity</desc>
 <defs>
   <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0%" stop-color="#58a6ff"/>
