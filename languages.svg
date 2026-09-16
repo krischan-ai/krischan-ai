@@ -10,11 +10,11 @@
 <rect x="0.5" y="0.5" width="739" height="329" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">Active Development Stack</text>
 <text x="24" y="56" class="subtitle">Authored source changes · generated/vendor/data excluded · reference repositories down-weighted</text>
-<text x="24" y="78" class="meta"><tspan class="metaStrong">601</tspan> commits · <tspan class="metaStrong">13</tspan> active repos · <tspan class="metaStrong">368,502</tspan> weighted effective lines</text>
+<text x="24" y="78" class="meta"><tspan class="metaStrong">603</tspan> commits · <tspan class="metaStrong">13</tspan> active repos · <tspan class="metaStrong">368,644</tspan> weighted effective lines</text>
 <text x="24" y="107" class="lang">Python</text>
 <rect x="180" y="96" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="96" width="354.3" height="12" rx="6" fill="#3572A5"/>
-<text x="704" y="107" text-anchor="end" class="pct">70.9%</text>
+<rect x="180" y="96" width="354.2" height="12" rx="6" fill="#3572A5"/>
+<text x="704" y="107" text-anchor="end" class="pct">70.8%</text>
 <text x="24" y="138" class="lang">GDScript</text>
 <rect x="180" y="127" width="500" height="12" rx="6" fill="#21262d"/>
 <rect x="180" y="127" width="98.2" height="12" rx="6" fill="#355570"/>
@@ -33,7 +33,7 @@
 <text x="704" y="231" text-anchor="end" class="pct">1.2%</text>
 <text x="24" y="262" class="lang">HTML</text>
 <rect x="180" y="251" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="251" width="5.1" height="12" rx="6" fill="#e34c26"/>
+<rect x="180" y="251" width="5.2" height="12" rx="6" fill="#e34c26"/>
 <text x="704" y="262" text-anchor="end" class="pct">1.0%</text>
 <text x="24" y="293" class="lang">Jupyter Notebook</text>
 <rect x="180" y="282" width="500" height="12" rx="6" fill="#21262d"/>
