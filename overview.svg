@@ -27,13 +27,13 @@
 <g>
     <rect x="24" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
     <text x="38" y="155" class="eyebrow">7D COMMITS</text>
-    <text x="38" y="184" class="value">2</text>
+    <text x="38" y="184" class="value">1</text>
     <text x="38" y="202" class="note">source commits</text>
   </g>
 <g>
     <rect x="198" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
     <text x="212" y="155" class="eyebrow">7D CODE CHURN</text>
-    <text x="212" y="184" class="value">1,677</text>
+    <text x="212" y="184" class="value">205</text>
     <text x="212" y="202" class="note">weighted effective lines</text>
   </g>
 <g>
