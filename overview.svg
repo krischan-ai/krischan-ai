@@ -45,7 +45,7 @@
 <g>
     <rect x="546" y="130" width="158" height="82" rx="10" fill="#161b22" stroke="#30363d"/>
     <text x="560" y="155" class="eyebrow">AUTHORED COMMITS</text>
-    <text x="560" y="184" class="value">620</text>
+    <text x="560" y="184" class="value">631</text>
     <text x="560" y="202" class="note">six-month window</text>
   </g>
 <text x="24" y="249" class="note">Metrics use authored source-code changes, excluding generated/vendor/data artifacts and down-weighting coursework/reference repositories.</text>
