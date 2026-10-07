@@ -10,14 +10,14 @@
 <rect x="0.5" y="0.5" width="739" height="329" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">Active Development Stack</text>
 <text x="24" y="56" class="subtitle">Authored source changes · generated/vendor/data excluded · reference repositories down-weighted</text>
-<text x="24" y="78" class="meta"><tspan class="metaStrong">829</tspan> commits · <tspan class="metaStrong">16</tspan> active repos · <tspan class="metaStrong">471,120</tspan> weighted effective lines</text>
+<text x="24" y="78" class="meta"><tspan class="metaStrong">831</tspan> commits · <tspan class="metaStrong">16</tspan> active repos · <tspan class="metaStrong">471,397</tspan> weighted effective lines</text>
 <text x="24" y="107" class="lang">Python</text>
 <rect x="180" y="96" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="96" width="277.5" height="12" rx="6" fill="#3572A5"/>
+<rect x="180" y="96" width="277.4" height="12" rx="6" fill="#3572A5"/>
 <text x="704" y="107" text-anchor="end" class="pct">55.5%</text>
 <text x="24" y="138" class="lang">Go</text>
 <rect x="180" y="127" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="127" width="99.1" height="12" rx="6" fill="#00ADD8"/>
+<rect x="180" y="127" width="99.2" height="12" rx="6" fill="#00ADD8"/>
 <text x="704" y="138" text-anchor="end" class="pct">19.8%</text>
 <text x="24" y="169" class="lang">GDScript</text>
 <rect x="180" y="158" width="500" height="12" rx="6" fill="#21262d"/>
@@ -29,11 +29,11 @@
 <text x="704" y="200" text-anchor="end" class="pct">3.6%</text>
 <text x="24" y="231" class="lang">TypeScript</text>
 <rect x="180" y="220" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="220" width="14.4" height="12" rx="6" fill="#3178c6"/>
+<rect x="180" y="220" width="14.5" height="12" rx="6" fill="#3178c6"/>
 <text x="704" y="231" text-anchor="end" class="pct">2.9%</text>
 <text x="24" y="262" class="lang">Shell</text>
 <rect x="180" y="251" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="251" width="10.0" height="12" rx="6" fill="#89e051"/>
+<rect x="180" y="251" width="9.9" height="12" rx="6" fill="#89e051"/>
 <text x="704" y="262" text-anchor="end" class="pct">2.0%</text>
 <text x="24" y="293" class="lang">HTML</text>
 <rect x="180" y="282" width="500" height="12" rx="6" fill="#21262d"/>
