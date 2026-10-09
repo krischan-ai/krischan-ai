@@ -9,50 +9,50 @@
 </style>
 <rect x="0.5" y="0.5" width="739" height="337" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">7-Day Engineering Activity</text>
-<text x="24" y="56" class="subtitle">58 source commits · 25,105 weighted effective lines · reference repos down-weighted</text>
+<text x="24" y="56" class="subtitle">20 source commits · 16,495 weighted effective lines · reference repos down-weighted</text>
 <circle cx="526" cy="29" r="5" fill="#3fb950"/><text x="538" y="33" class="legend">Additions</text>
 <circle cx="624" cy="29" r="5" fill="#f85149"/><text x="636" y="33" class="legend">Deletions</text>
 <line x1="36" y1="170" x2="704" y2="170" stroke="#30363d"/>
-<rect x="61" y="109" width="28" height="61" rx="4" fill="#3fb950"/>
-<rect x="61" y="170" width="28" height="7" rx="4" fill="#f85149"/>
-<text x="75" y="102" text-anchor="middle" class="value add">+7684</text>
-<text x="75" y="193" text-anchor="middle" class="value del">-926</text>
-<text x="75" y="298" text-anchor="middle" class="date">10/3</text>
-<text x="75" y="316" text-anchor="middle" class="date">38c</text>
+<rect x="61" y="170" width="28" height="0" rx="4" fill="#3fb950"/>
+<rect x="61" y="170" width="28" height="0" rx="4" fill="#f85149"/>
+<text x="75" y="163" text-anchor="middle" class="value add">+0</text>
+<text x="75" y="186" text-anchor="middle" class="value del">-0</text>
+<text x="75" y="298" text-anchor="middle" class="date">10/4</text>
+<text x="75" y="316" text-anchor="middle" class="date">0c</text>
 <rect x="157" y="170" width="28" height="0" rx="4" fill="#3fb950"/>
 <rect x="157" y="170" width="28" height="0" rx="4" fill="#f85149"/>
 <text x="171" y="163" text-anchor="middle" class="value add">+0</text>
 <text x="171" y="186" text-anchor="middle" class="value del">-0</text>
-<text x="171" y="298" text-anchor="middle" class="date">10/4</text>
+<text x="171" y="298" text-anchor="middle" class="date">10/5</text>
 <text x="171" y="316" text-anchor="middle" class="date">0c</text>
-<rect x="253" y="170" width="28" height="0" rx="4" fill="#3fb950"/>
+<rect x="253" y="165" width="28" height="5" rx="4" fill="#3fb950"/>
 <rect x="253" y="170" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="267" y="163" text-anchor="middle" class="value add">+0</text>
-<text x="267" y="186" text-anchor="middle" class="value del">-0</text>
-<text x="267" y="298" text-anchor="middle" class="date">10/5</text>
-<text x="267" y="316" text-anchor="middle" class="date">0c</text>
-<rect x="349" y="165" width="28" height="5" rx="4" fill="#3fb950"/>
+<text x="267" y="158" text-anchor="middle" class="value add">+589</text>
+<text x="267" y="186" text-anchor="middle" class="value del">-25</text>
+<text x="267" y="298" text-anchor="middle" class="date">10/6</text>
+<text x="267" y="316" text-anchor="middle" class="date">2c</text>
+<rect x="349" y="151" width="28" height="19" rx="4" fill="#3fb950"/>
 <rect x="349" y="170" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="363" y="158" text-anchor="middle" class="value add">+589</text>
-<text x="363" y="186" text-anchor="middle" class="value del">-25</text>
-<text x="363" y="298" text-anchor="middle" class="date">10/6</text>
-<text x="363" y="316" text-anchor="middle" class="date">2c</text>
-<rect x="445" y="151" width="28" height="19" rx="4" fill="#3fb950"/>
+<text x="363" y="144" text-anchor="middle" class="value add">+2337</text>
+<text x="363" y="186" text-anchor="middle" class="value del">-10</text>
+<text x="363" y="298" text-anchor="middle" class="date">10/7</text>
+<text x="363" y="316" text-anchor="middle" class="date">4c</text>
+<rect x="445" y="161" width="28" height="9" rx="4" fill="#3fb950"/>
 <rect x="445" y="170" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="459" y="144" text-anchor="middle" class="value add">+2337</text>
-<text x="459" y="186" text-anchor="middle" class="value del">-10</text>
-<text x="459" y="298" text-anchor="middle" class="date">10/7</text>
-<text x="459" y="316" text-anchor="middle" class="date">4c</text>
-<rect x="541" y="161" width="28" height="9" rx="4" fill="#3fb950"/>
-<rect x="541" y="170" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="555" y="154" text-anchor="middle" class="value add">+1101</text>
-<text x="555" y="186" text-anchor="middle" class="value del">-57</text>
-<text x="555" y="298" text-anchor="middle" class="date">10/8</text>
-<text x="555" y="316" text-anchor="middle" class="date">8c</text>
-<rect x="637" y="84" width="28" height="86" rx="4" fill="#3fb950"/>
-<rect x="637" y="170" width="28" height="13" rx="4" fill="#f85149"/>
-<text x="651" y="77" text-anchor="middle" class="value add">+10802</text>
-<text x="651" y="199" text-anchor="middle" class="value del">-1574</text>
-<text x="651" y="298" text-anchor="middle" class="date">10/9</text>
-<text x="651" y="316" text-anchor="middle" class="date">6c</text>
+<text x="459" y="154" text-anchor="middle" class="value add">+1101</text>
+<text x="459" y="186" text-anchor="middle" class="value del">-57</text>
+<text x="459" y="298" text-anchor="middle" class="date">10/8</text>
+<text x="459" y="316" text-anchor="middle" class="date">8c</text>
+<rect x="541" y="84" width="28" height="86" rx="4" fill="#3fb950"/>
+<rect x="541" y="170" width="28" height="13" rx="4" fill="#f85149"/>
+<text x="555" y="77" text-anchor="middle" class="value add">+10802</text>
+<text x="555" y="199" text-anchor="middle" class="value del">-1574</text>
+<text x="555" y="298" text-anchor="middle" class="date">10/9</text>
+<text x="555" y="316" text-anchor="middle" class="date">6c</text>
+<rect x="637" y="170" width="28" height="0" rx="4" fill="#3fb950"/>
+<rect x="637" y="170" width="28" height="0" rx="4" fill="#f85149"/>
+<text x="651" y="163" text-anchor="middle" class="value add">+0</text>
+<text x="651" y="186" text-anchor="middle" class="value del">-0</text>
+<text x="651" y="298" text-anchor="middle" class="date">10/10</text>
+<text x="651" y="316" text-anchor="middle" class="date">0c</text>
 </svg>
