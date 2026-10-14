@@ -7,6 +7,8 @@ on:
     paths:
       - "generate.js"
       - "generate-languages.js"
+      - "github-api.js"
+      - "test/**"
       - "generate-repositories.js"
       - "generate-overview.js"
       - "generate-featured-projects.js"
@@ -39,12 +41,16 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Test GitHub API resilience
+        run: node --test test/*.test.js
+
       - name: Generate activity metrics
         env:
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
           METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
+          LANGUAGE_API_CONCURRENCY: "3"
           LANGUAGE_METRICS_DAYS: "180"
           LANGUAGE_FILE_CHANGE_CAP: "1000"
           REPOSITORY_METRICS_DAYS: "180"

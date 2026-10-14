@@ -1,0 +1,27 @@
+name: Metrics resilience tests
+
+on:
+  pull_request:
+    paths:
+      - "generate*.js"
+      - "github-api.js"
+      - "test/**"
+      - "repository-rules.json"
+      - "featured-projects.json"
+      - ".github/workflows/metrics*.yml"
+  push:
+    branches:
+      - "codex/fix-language-api-retries"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+      - run: node --test test/*.test.js

@@ -1,6 +1,8 @@
 "use strict";
 
 const fs = require("node:fs");
+const { createGithubClient } = require("./github-api");
+const API_CONCURRENCY = Number(process.env.LANGUAGE_API_CONCURRENCY || 3);
 
 const USERNAME = process.env.GITHUB_USERNAME || "krischan-ai";
 const AUTHOR_EMAILS = csvSet(process.env.METRICS_AUTHOR_EMAILS);
@@ -45,16 +47,7 @@ const headers = {
   "X-GitHub-Api-Version": "2022-11-28",
 };
 
-async function github(path, params = {}) {
-  const url = new URL(path, API_URL);
-  for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
-  const response = await fetch(url, { headers });
-  if (!response.ok) {
-    const body = await response.text();
-    throw new Error(`GitHub API ${response.status} for ${url.pathname}: ${body.slice(0, 300)}`);
-  }
-  return response.json();
-}
+const github = createGithubClient({ headers, apiUrl: API_URL, concurrency: API_CONCURRENCY });
 
 async function allPages(path, params = {}) {
   const items = [];
@@ -141,6 +134,7 @@ async function collectBranches(repo) {
     const branches = await allPages(`/repos/${repo.full_name}/branches`);
     return [...new Set([repo.default_branch, ...branches.map((branch) => branch.name)].filter(Boolean))];
   } catch (error) {
+    if (error.status !== 404) throw error;
     console.warn(`Could not load branches for ${repo.full_name}: ${error.message}`);
     return [repo.default_branch].filter(Boolean);
   }
@@ -150,6 +144,7 @@ async function collectBranchCommits(repo, branch, since) {
   try {
     return await allPages(`/repos/${repo.full_name}/commits`, { sha: branch, since });
   } catch (error) {
+    if (![404, 409].includes(error.status)) throw error;
     console.warn(`Skipping ${repo.full_name}@${branch}: ${error.message}`);
     return [];
   }
@@ -165,7 +160,8 @@ async function collect() {
       sort: "updated",
     });
   } catch (error) {
-    if (!error.message.includes("GitHub API 403")) throw error;
+    if (error.status !== 403 || error.retryable) throw error;
+    console.warn(`Falling back to public owner repositories: ${error.message}`);
     repositories = await allPages(`/users/${USERNAME}/repos`, { type: "owner", sort: "updated" });
   }
 
@@ -174,9 +170,9 @@ async function collect() {
     return !repo.archived && !repo.disabled && !rule.exclude && !EXCLUDED_REPOSITORIES.has(repo.full_name.toLowerCase());
   });
 
-  const commitGroups = await mapLimit(active, 5, async (repo) => {
+  const commitGroups = await mapLimit(active, API_CONCURRENCY, async (repo) => {
     const branches = await collectBranches(repo);
-    const commitsByBranch = await mapLimit(branches, 3, (branch) => collectBranchCommits(repo, branch, since));
+    const commitsByBranch = await mapLimit(branches, API_CONCURRENCY, (branch) => collectBranchCommits(repo, branch, since));
     return commitsByBranch
       .flat()
       .filter(authorMatches)
@@ -186,7 +182,7 @@ async function collect() {
   const unique = [...new Map(commitGroups.flat().map((item) => [`${item.repo}:${item.sha}`, item])).values()];
   console.log(`Matched ${unique.length} authored commits across ${active.length} repositories.`);
 
-  const details = await mapLimit(unique, 5, ({ repo, sha }) => github(`/repos/${repo}/commits/${sha}`));
+  const details = await mapLimit(unique, API_CONCURRENCY, ({ repo, sha }) => github(`/repos/${repo}/commits/${sha}`));
   const totals = new Map();
   const reposTouched = new Set();
   let sourceFiles = 0;
