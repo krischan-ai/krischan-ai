@@ -23,3 +23,26 @@ AI Systems · RAG & Agents · Simulation · Applied Data Engineering
 ## Active Projects
 
 ![Active Repositories](./repositories.svg?v=20260914-1)
+
+## Metrics reliability
+
+`generate.js`, `generate-languages.js` and `generate-repositories.js` share a client
+that retries transient socket/time-out failures (including response-body
+reads), HTTP 500/502/503/504, and explicit rate limits up to four total attempts.
+Each attempt has a 30-second timeout; retries use 1/2/4-second exponential backoff
+plus jitter. `Retry-After` and primary rate-limit reset times are honored within a
+30-second wait budget; longer waits fail with the original API diagnostic.
+
+`WORKLOAD_API_CONCURRENCY`, `LANGUAGE_API_CONCURRENCY` and
+`REPOSITORY_API_CONCURRENCY` each default to `3` (allowed range: `1`–`5`). A global
+request limiter in each generator also covers nested repository/branch pools. Ordinary authentication,
+permission and validation errors are not retried. Existing public-repository fallback
+for `/user/repos` permission errors is retained with an explicit warning; exhausted
+rate limits never trigger that fallback. Unavailable branches (404) and empty
+repositories (409) retain their existing warnings; other collection failures stop
+instead of publishing incomplete statistics. Each generator's previous SVG is retained
+on failure. Statistics weights, exclusions, deduplication and rendering are unchanged.
+
+Run `node --test test/*.test.js` (Node.js 20 or newer) to verify retries, API errors,
+concurrency, all three API generators recovering from socket/502/504 failures,
+and a full five-generator fixture run.
