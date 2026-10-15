@@ -51,6 +51,8 @@ jobs:
           METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
           METRICS_EXCLUDED_REPOSITORIES: ${{ github.repository }}
           LANGUAGE_API_CONCURRENCY: "3"
+          WORKLOAD_API_CONCURRENCY: "3"
+          REPOSITORY_API_CONCURRENCY: "3"
           LANGUAGE_METRICS_DAYS: "180"
           LANGUAGE_FILE_CHANGE_CAP: "1000"
           REPOSITORY_METRICS_DAYS: "180"

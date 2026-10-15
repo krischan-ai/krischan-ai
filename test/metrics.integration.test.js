@@ -19,9 +19,16 @@ async function fixture(t, mode) {
   const cwd = fs.mkdtempSync(path.join(os.tmpdir(), 'metrics-test-'));
   for (const file of ['repository-rules.json', 'featured-projects.json']) fs.copyFileSync(path.join(root, file), path.join(cwd, file));
   let disconnects = 0;
+  let detailRequests = 0;
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost');
     const route = url.pathname;
+    if (route.endsWith('/commits/c1')) {
+      detailRequests++;
+      if (mode === 'persistent-504' || (['502', '504'].includes(mode) && detailRequests === 1)) {
+        res.writeHead(mode === '502' ? 502 : 504); res.end('temporary GitHub server error'); return;
+      }
+    }
     if (route.endsWith('/commits/c1') && mode === 'disconnect' && disconnects++ === 0) { req.socket.destroy(); return; }
     if (route.endsWith('/branches') && mode === 'permission') { res.writeHead(403); res.end('Resource not accessible by personal access token'); return; }
     if (route.endsWith('/commits') && mode === 'invalid') { res.writeHead(422); res.end('Invalid sha parameter'); return; }
@@ -35,7 +42,7 @@ async function fixture(t, mode) {
   });
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   t.after(async () => { await new Promise(resolve => server.close(resolve)); fs.rmSync(cwd, { recursive: true, force: true }); });
-  return { cwd, apiUrl: `http://127.0.0.1:${server.address().port}`, disconnects: () => disconnects };
+  return { cwd, apiUrl: `http://127.0.0.1:${server.address().port}`, disconnects: () => disconnects, detailRequests: () => detailRequests };
 }
 test('all five generators run; real socket disconnect recovers without changing language SVG', async t => {
   const f = await fixture(t, 'disconnect');
@@ -52,13 +59,41 @@ test('all five generators run; real socket disconnect recovers without changing 
   const overview = fs.readFileSync(path.join(f.cwd, 'overview.svg'), 'utf8');
   assert.match(overview, /Python/); assert.doesNotMatch(overview, /—/);
 });
-for (const mode of ['permission', 'invalid']) {
-  test(`${mode} errors stop language generation and preserve previous SVG`, async t => {
-    const f = await fixture(t, mode);
-    fs.writeFileSync(path.join(f.cwd, 'languages.svg'), 'previous complete chart');
-    const result = await run('generate-languages.js', f.cwd, f.apiUrl);
-    assert.equal(result.code, 1); assert.match(result.output, mode === 'permission' ? /403.*Resource not accessible/ : /422.*Invalid sha/);
-    assert.doesNotMatch(result.output, /Retrying/);
-    assert.equal(fs.readFileSync(path.join(f.cwd, 'languages.svg'), 'utf8'), 'previous complete chart');
-  });
+const apiGenerators = [
+  ['generate.js', 'workload-chart.svg', /1 source commits · 30 weighted effective lines/],
+  ['generate-languages.js', 'languages.svg', />30<\/tspan> weighted effective lines/],
+  ['generate-repositories.js', 'repositories.svg', /30 · 1c/],
+];
+for (const [script, svg, expected] of apiGenerators) {
+  for (const mode of ['disconnect', '502', '504']) {
+    test(`${script} recovers from ${mode} without changing statistics`, async t => {
+      const f = await fixture(t, mode);
+      const result = await run(script, f.cwd, f.apiUrl);
+      assert.equal(result.code, 0, result.output);
+      assert.match(result.output, /Retrying/);
+      assert.match(result.output, mode === 'disconnect' ? /UND_ERR_SOCKET/ : new RegExp(`GitHub API ${mode}`));
+      assert.equal(f.detailRequests(), 2);
+      const recovered = fs.readFileSync(path.join(f.cwd, svg), 'utf8');
+      assert.match(recovered, expected);
+      const clean = await run(script, f.cwd, f.apiUrl);
+      assert.equal(clean.code, 0, clean.output);
+      assert.equal(fs.readFileSync(path.join(f.cwd, svg), 'utf8'), recovered);
+    });
+  }
+  for (const mode of ['permission', 'invalid', 'persistent-504']) {
+    test(`${script} stops on ${mode} and preserves previous SVG`, async t => {
+      const f = await fixture(t, mode);
+      fs.writeFileSync(path.join(f.cwd, svg), 'previous complete chart');
+      const result = await run(script, f.cwd, f.apiUrl);
+      assert.equal(result.code, 1, result.output);
+      if (mode === 'persistent-504') {
+        assert.match(result.output, /failed after 4 attempt\(s\).*GitHub API 504/);
+        assert.equal(f.detailRequests(), 4);
+      } else {
+        assert.match(result.output, mode === 'permission' ? /403.*Resource not accessible/ : /422.*Invalid sha/);
+        assert.doesNotMatch(result.output, /Retrying/);
+      }
+      assert.equal(fs.readFileSync(path.join(f.cwd, svg), 'utf8'), 'previous complete chart');
+    });
+  }
 }
