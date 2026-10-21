@@ -9,7 +9,7 @@
 </style>
 <rect x="0.5" y="0.5" width="739" height="337" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">7-Day Engineering Activity</text>
-<text x="24" y="56" class="subtitle">6 source commits · 17,001 weighted effective lines · reference repos down-weighted</text>
+<text x="24" y="56" class="subtitle">9 source commits · 17,685 weighted effective lines · reference repos down-weighted</text>
 <circle cx="526" cy="29" r="5" fill="#3fb950"/><text x="538" y="33" class="legend">Additions</text>
 <circle cx="624" cy="29" r="5" fill="#f85149"/><text x="636" y="33" class="legend">Deletions</text>
 <line x1="36" y1="170" x2="704" y2="170" stroke="#30363d"/>
@@ -49,10 +49,10 @@
 <text x="555" y="211" text-anchor="middle" class="value del">-3649</text>
 <text x="555" y="298" text-anchor="middle" class="date">10/20</text>
 <text x="555" y="316" text-anchor="middle" class="date">3c</text>
-<rect x="637" y="167" width="28" height="3" rx="4" fill="#3fb950"/>
+<rect x="637" y="163" width="28" height="7" rx="4" fill="#3fb950"/>
 <rect x="637" y="170" width="28" height="0" rx="4" fill="#f85149"/>
-<text x="651" y="160" text-anchor="middle" class="value add">+383</text>
-<text x="651" y="186" text-anchor="middle" class="value del">-7</text>
+<text x="651" y="156" text-anchor="middle" class="value add">+1063</text>
+<text x="651" y="186" text-anchor="middle" class="value del">-11</text>
 <text x="651" y="298" text-anchor="middle" class="date">10/21</text>
-<text x="651" y="316" text-anchor="middle" class="date">2c</text>
+<text x="651" y="316" text-anchor="middle" class="date">5c</text>
 </svg>
