@@ -10,15 +10,15 @@
 <rect x="0.5" y="0.5" width="739" height="329" rx="10" fill="#0d1117" stroke="#30363d"/>
 <text x="24" y="34" class="title">Active Development Stack</text>
 <text x="24" y="56" class="subtitle">Authored source changes · generated/vendor/data excluded · reference repositories down-weighted</text>
-<text x="24" y="78" class="meta"><tspan class="metaStrong">1633</tspan> commits · <tspan class="metaStrong">19</tspan> active repos · <tspan class="metaStrong">651,659</tspan> weighted effective lines</text>
+<text x="24" y="78" class="meta"><tspan class="metaStrong">1699</tspan> commits · <tspan class="metaStrong">17</tspan> active repos · <tspan class="metaStrong">651,906</tspan> weighted effective lines</text>
 <text x="24" y="107" class="lang">Python</text>
 <rect x="180" y="96" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="96" width="204.6" height="12" rx="6" fill="#3572A5"/>
-<text x="704" y="107" text-anchor="end" class="pct">40.9%</text>
+<rect x="180" y="96" width="202.2" height="12" rx="6" fill="#3572A5"/>
+<text x="704" y="107" text-anchor="end" class="pct">40.4%</text>
 <text x="24" y="138" class="lang">Go</text>
 <rect x="180" y="127" width="500" height="12" rx="6" fill="#21262d"/>
-<rect x="180" y="127" width="174.4" height="12" rx="6" fill="#00ADD8"/>
-<text x="704" y="138" text-anchor="end" class="pct">34.9%</text>
+<rect x="180" y="127" width="176.8" height="12" rx="6" fill="#00ADD8"/>
+<text x="704" y="138" text-anchor="end" class="pct">35.4%</text>
 <text x="24" y="169" class="lang">GDScript</text>
 <rect x="180" y="158" width="500" height="12" rx="6" fill="#21262d"/>
 <rect x="180" y="158" width="55.8" height="12" rx="6" fill="#355570"/>
