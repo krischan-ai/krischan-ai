@@ -16,8 +16,8 @@ on:
       - "featured-projects.json"
       - ".github/workflows/metrics.yml"
   schedule:
-    # GitHub cron uses UTC. Run every 4 hours so same-day work appears sooner.
-    - cron: "30 */4 * * *"
+    # Daily at 08:30 UTC+8.
+    - cron: "30 0 * * *"
   workflow_dispatch:
 
 permissions:
@@ -30,6 +30,7 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
       - name: Check out profile repository
         uses: actions/checkout@v5
@@ -46,6 +47,8 @@ jobs:
 
       - name: Generate activity metrics
         env:
+          METRICS_RUN_CACHE: ${{ runner.temp }}/profile-metrics-${{ github.run_id }}-${{ github.run_attempt }}
+          METRICS_MAX_RATE_WAIT_MS: "3600000"
           METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           METRICS_AUTHOR_EMAILS: chenjun441900@gmail.com
@@ -58,6 +61,7 @@ jobs:
           REPOSITORY_METRICS_DAYS: "180"
           REPOSITORY_FILE_CHANGE_CAP: "1000"
         run: |
+          trap 'rm -rf -- "$METRICS_RUN_CACHE"' EXIT
           git pull --ff-only origin "${GITHUB_REF_NAME}"
           node generate.js
           node generate-languages.js
@@ -66,6 +70,7 @@ jobs:
           node generate-featured-projects.js
 
       - name: Commit charts
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
