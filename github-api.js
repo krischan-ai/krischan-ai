@@ -1,5 +1,8 @@
 "use strict";
 
+const fs = require("node:fs");
+const pathModule = require("node:path");
+const { createHash } = require("node:crypto");
 const { setTimeout: sleep } = require("node:timers/promises");
 
 const NETWORK_CODES = new Set([
@@ -41,14 +44,44 @@ function createGithubClient({ headers, apiUrl = "https://api.github.com",
     }
   }
 
+  const cacheDir = process.env.METRICS_RUN_CACHE;
+  const rateWaitBudget = Number(process.env.METRICS_MAX_RATE_WAIT_MS || maxDelayMs);
+  let requests = 0;
+  let hits = 0;
   return async function github(path, params = {}) {
     const url = new URL(path, apiUrl);
     for (const [key, value] of Object.entries(params)) url.searchParams.set(key, value);
+    // Only immutable commit details are shared across processes; never cache branch listings.
+    const cacheable = cacheDir && /^\/repos\/[^/]+\/[^/]+\/commits\/[0-9a-f]{40}$/i.test(url.pathname);
+    const cacheFile = cacheable && pathModule.join(cacheDir, createHash("sha256").update(url.href).digest("hex") + ".json");
+    if (cacheFile) {
+      try {
+        const cached = JSON.parse(fs.readFileSync(cacheFile, "utf8"));
+        hits++;
+        if (hits === 1 || hits % 250 === 0) warn("Commit detail cache hits: " + hits);
+        return cached;
+      } catch (error) {
+        if (error.code !== "ENOENT") throw error;
+      }
+    }
     for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
       try {
         return await limited(async () => {
+          requests++;
           const response = await fetchImpl(url, { headers, signal: AbortSignal.timeout(timeoutMs) });
-          if (response.ok) return await response.json();
+          if (requests === 1 || requests % 250 === 0) {
+            warn("GitHub API requests: " + requests + "; remaining: " + (response.headers.get("x-ratelimit-remaining") || "unknown"));
+          }
+          if (response.ok) {
+            const data = await response.json();
+            if (cacheFile) {
+              fs.mkdirSync(cacheDir, { recursive: true, mode: 0o700 });
+              const temp = cacheFile + "." + process.pid + "." + random().toString(36).slice(2);
+              fs.writeFileSync(temp, JSON.stringify(data), { mode: 0o600, flag: "wx" });
+              fs.renameSync(temp, cacheFile);
+            }
+            return data;
+          }
           const body = await response.text();
           const retryAfter = response.headers.get("retry-after");
           const rateLimited = response.status === 429 || (response.status === 403 &&
@@ -56,6 +89,7 @@ function createGithubClient({ headers, apiUrl = "https://api.github.com",
               /(?:secondary )?rate limit|abuse detection/i.test(body)));
           const error = new Error(`GitHub API ${response.status} for ${url.pathname}: ${body.slice(0, 300)}`);
           error.status = response.status;
+          error.rateLimited = rateLimited;
           error.retryable = rateLimited || [500, 502, 503, 504].includes(response.status);
           let delay = retryAfter === null ? 0 : Number(retryAfter) * 1000;
           if (!Number.isFinite(delay)) delay = Date.parse(retryAfter) - Date.now();
@@ -68,7 +102,7 @@ function createGithubClient({ headers, apiUrl = "https://api.github.com",
       } catch (error) {
         const retryable = error.retryable || transientNetworkError(error);
         // Do not retry early when GitHub asks us to wait longer than our budget.
-        if (!retryable || attempt === maxAttempts || error.retryDelayMs > maxDelayMs) {
+        if (!retryable || attempt === maxAttempts || error.retryDelayMs > (error.rateLimited ? rateWaitBudget : maxDelayMs)) {
           const causeCode = error.cause?.code || error.code || error.name;
           const final = new Error(`GitHub request ${url.pathname} failed after ${attempt} attempt(s): ${error.message} [${causeCode}]`, { cause: error });
           final.status = error.status;
